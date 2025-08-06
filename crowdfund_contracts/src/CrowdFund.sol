@@ -17,6 +17,14 @@ contract CrowdFund {
     uint256 public numberOfCampaigns = 0;
     mapping(uint256 => Campaign) public campaigns;
 
+    fallback() external payable {
+        donateToCampaign(numberOfCampaigns);
+    }
+
+    receive() external payable {
+        donateToCampaign(numberOfCampaigns);
+    }
+
     function createCampaign(
         address _owner,
         string memory _title,
@@ -43,6 +51,17 @@ contract CrowdFund {
     }
 
     function donateToCampaign(uint256 _id) public payable {
+        require(_id < numberOfCampaigns, "Campaign does not exist.");
+        require(msg.value > 0, "Donation must be greater than zero.");
+        require(
+            block.timestamp < campaigns[_id].deadline,
+            "Campaign has ended."
+        );
+        require(
+            campaigns[_id].amountCollected < campaigns[_id].target,
+            "Campaign has already reached its target."
+        );
+
         uint256 amount = msg.value;
         Campaign storage campaign = campaigns[_id];
 
@@ -50,6 +69,11 @@ contract CrowdFund {
         campaign.donations.push(amount);
 
         (bool sent, ) = payable(campaign.owner).call{value: amount}("");
+        if (!sent) {
+            campaign.donators.pop();
+            campaign.donations.pop();
+        }
+
         require(sent, "Transfer failed.");
 
         campaign.amountCollected += amount;
