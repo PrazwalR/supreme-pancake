@@ -37,14 +37,8 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 30 days;
 
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         assertEq(campaignId, 0);
         assertEq(crowdFund.numberOfCampaigns(), 1);
@@ -67,14 +61,7 @@ contract CrowdFundTest is Test {
 
         vm.prank(campaignOwner);
         vm.expectRevert("Deadline must be in the future.");
-        crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            pastDeadline,
-            IMAGE_URL
-        );
+        crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, pastDeadline, IMAGE_URL);
     }
 
     function testDonateToCampaign() public {
@@ -83,14 +70,8 @@ contract CrowdFundTest is Test {
 
         // Create campaign
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         // Donate to campaign
         vm.prank(donor1);
@@ -106,10 +87,7 @@ contract CrowdFundTest is Test {
         assertEq(donators[0], donor1);
 
         // Check funds were transferred to campaign owner
-        assertEq(
-            campaignOwner.balance,
-            campaignOwnerInitialBalance + DONATION_AMOUNT
-        );
+        assertEq(campaignOwner.balance, campaignOwnerInitialBalance + DONATION_AMOUNT);
     }
 
     function testMultipleDonations() public {
@@ -117,14 +95,8 @@ contract CrowdFundTest is Test {
 
         // Create campaign
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         // Multiple donations
         vm.prank(donor1);
@@ -158,14 +130,8 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 30 days;
 
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         vm.prank(donor1);
         vm.expectRevert("Donation must be greater than zero.");
@@ -176,14 +142,8 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 1 hours;
 
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         // Fast forward past deadline
         vm.warp(deadline + 1);
@@ -197,14 +157,8 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 30 days;
 
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         // Donate exactly the target amount
         vm.prank(donor1);
@@ -221,22 +175,8 @@ contract CrowdFundTest is Test {
 
         // Create multiple campaigns
         vm.startPrank(campaignOwner);
-        crowdFund.createCampaign(
-            campaignOwner,
-            "Campaign 1",
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
-        crowdFund.createCampaign(
-            campaignOwner,
-            "Campaign 2",
-            DESCRIPTION,
-            TARGET_AMOUNT * 2,
-            deadline,
-            IMAGE_URL
-        );
+        crowdFund.createCampaign(campaignOwner, "Campaign 1", DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
+        crowdFund.createCampaign(campaignOwner, "Campaign 2", DESCRIPTION, TARGET_AMOUNT * 2, deadline, IMAGE_URL);
         vm.stopPrank();
 
         CrowdFund.Campaign[] memory allCampaigns = crowdFund.getCampaigns();
@@ -252,14 +192,8 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 30 days;
 
         vm.prank(campaignOwner);
-        uint256 campaignId = crowdFund.createCampaign(
-            address(rejectETH),
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        uint256 campaignId =
+            crowdFund.createCampaign(address(rejectETH), TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         vm.prank(donor1);
         vm.expectRevert("Transfer failed.");
@@ -277,22 +211,13 @@ contract CrowdFundTest is Test {
         uint256 deadline = block.timestamp + 30 days;
 
         vm.prank(campaignOwner);
-        crowdFund.createCampaign(
-            campaignOwner,
-            TITLE,
-            DESCRIPTION,
-            TARGET_AMOUNT,
-            deadline,
-            IMAGE_URL
-        );
+        crowdFund.createCampaign(campaignOwner, TITLE, DESCRIPTION, TARGET_AMOUNT, deadline, IMAGE_URL);
 
         // The fallback/receive functions have a bug - they try to donate to campaign ID `numberOfCampaigns`
         // but valid campaign IDs are 0 to numberOfCampaigns-1, so this should fail
         vm.prank(donor1);
         vm.expectRevert("Campaign does not exist.");
-        (bool success, bytes memory data) = address(crowdFund).call{
-            value: DONATION_AMOUNT
-        }("");
+        (bool success, bytes memory data) = address(crowdFund).call{value: DONATION_AMOUNT}("");
         // Suppress unused variable warnings - expectRevert handles the call result
         success;
         data;
